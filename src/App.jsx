@@ -8,6 +8,8 @@ import Posture from "./pages/Posture";
 import LiveClass from "./pages/LiveClass";
 import Progress from "./pages/Progress";
 import Login from "./pages/Login";
+import Contact from "./pages/Contact";
+import Join from "./pages/Join";
 
 export default function App() {
   return (
@@ -21,6 +23,8 @@ export default function App() {
         <Route path="/live" element={<LiveClass />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/join" element={<Join />} />   
       </Routes>
 
       <Footer />
