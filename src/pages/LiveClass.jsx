@@ -22,7 +22,7 @@ export default function LiveClass() {
   // POSE DETECTION
   const runPoseDetection = async () => {
     const detector = await poseDetection.createDetector(
-      poseDetection.SupportedModels.MoveNet
+      poseDetection.SupportedModels.MoveNet,
     );
 
     setInterval(async () => {
@@ -33,8 +33,10 @@ export default function LiveClass() {
       if (poses.length > 0) {
         const keypoints = poses[0].keypoints;
 
-        const leftShoulder = keypoints.find(k => k.name === "left_shoulder");
-        const rightShoulder = keypoints.find(k => k.name === "right_shoulder");
+        const leftShoulder = keypoints.find((k) => k.name === "left_shoulder");
+        const rightShoulder = keypoints.find(
+          (k) => k.name === "right_shoulder",
+        );
 
         if (leftShoulder && rightShoulder) {
           if (Math.abs(leftShoulder.y - rightShoulder.y) < 20) {
@@ -48,25 +50,30 @@ export default function LiveClass() {
   };
 
   // USE EFFECT AFTER FUNCTIONS
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    startCamera();
-    runPoseDetection();
-  }, []);
+ useEffect(() => {
+  let mounted = true;
+
+  const init = async () => {
+    if (!mounted) return;
+    await startCamera();
+    await runPoseDetection();
+  };
+
+  init();
+
+  return () => {
+    mounted = false;
+  };
+}, []);
 
   return (
     <div className="bg-[#f5efe6] min-h-screen min-w-screen p-8">
       <h1 className="text-3xl font-bold mb-6">Live AI Yoga Class</h1>
 
       <div className="grid md:grid-cols-2 gap-8">
-
         {/* CAMERA */}
         <div>
-          <video
-            ref={videoRef}
-            autoPlay
-            className="rounded-lg shadow w-full"
-          />
+          <video ref={videoRef} autoPlay className="rounded-lg shadow w-full" />
 
           <p className="mt-4 text-xl font-semibold">{feedback}</p>
         </div>
@@ -85,7 +92,6 @@ export default function LiveClass() {
             Keep shoulders aligned and maintain balance.
           </p>
         </div>
-
       </div>
     </div>
   );
