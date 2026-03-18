@@ -80,12 +80,12 @@ export default function LiveClass() {
 
         {/* REFERENCE IMAGE */}
         <div className="bg-white p-6 rounded-2xl shadow">
-          <h2 className="text-xl font-bold mb-4">Correct Pose Reference</h2>
+          <h2 className="text-xl font-bold mb-4">Pose Reference</h2>
 
           <img
             src="https://cdn-icons-png.flaticon.com/512/3774/3774299.png"
             alt="Correct Pose"
-            className="w-60 mx-auto"
+            className="w-50 mx-auto"
           />
 
           <p className="text-gray-600 mt-4">
