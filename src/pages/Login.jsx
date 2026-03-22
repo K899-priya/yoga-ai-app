@@ -18,7 +18,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#f3c6c6] via-[#f5efe6] to-[#e7b6b6] relative overflow-hidden">
+    <div className="min-h-screen min-w-screen flex items-center justify-center bg-linear-to-br from-[#f3c6c6] via-[#f5efe6] to-[#e7b6b6] relative overflow-hidden">
 
       {/* 🔥 BACKGROUND GLOW */}
       <div className="absolute w-72 h-72 bg-pink-400 rounded-full blur-3xl opacity-30 top-10 left-10"></div>
@@ -70,13 +70,13 @@ export default function Login() {
           </div>
 
           {/* BUTTON */}
-          <motion.button
+          <_motion.button
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: 1.02 }}
             className="w-full bg-linear-to-r from-pink-500 to-orange-400 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition"
           >
             Login
-          </motion.button>
+          </_motion.button>
 
         </form>
 
