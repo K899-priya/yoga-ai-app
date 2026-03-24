@@ -110,7 +110,7 @@ export default function LiveClass() {
   }, []);
 
   // 🚀 INIT
- useEffect(() => {
+useEffect(() => {
   const init = async () => {
     await startCamera();
     await runPoseDetection();
@@ -119,10 +119,13 @@ export default function LiveClass() {
   init();
 
   return () => {
+    // clear interval
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
 
+    // stop camera safely
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const video = videoRef.current;
 
     if (video && video.srcObject) {
