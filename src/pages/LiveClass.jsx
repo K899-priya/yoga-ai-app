@@ -9,6 +9,7 @@ export default function LiveClass() {
 
   const [feedback, setFeedback] = useState("Starting camera...");
   const [accuracy, setAccuracy] = useState(0);
+  const [poseName, setPoseName] = useState("Detecting...");
 
   // 🎥 START CAMERA
   const startCamera = async () => {
@@ -24,11 +25,10 @@ export default function LiveClass() {
     }
   };
 
-  // 🎨 DRAW SKELETON (points + lines)
+  // 🎨 DRAW SKELETON
   const drawSkeleton = (keypoints, ctx) => {
     ctx.clearRect(0, 0, 640, 480);
 
-    // draw points
     keypoints.forEach((kp) => {
       if (kp.score > 0.5) {
         ctx.beginPath();
@@ -37,32 +37,42 @@ export default function LiveClass() {
         ctx.fill();
       }
     });
-
-    // draw lines (basic connections)
-    const pairs = [
-      ["left_shoulder", "right_shoulder"],
-      ["left_shoulder", "left_elbow"],
-      ["left_elbow", "left_wrist"],
-      ["right_shoulder", "right_elbow"],
-      ["right_elbow", "right_wrist"],
-    ];
-
-    pairs.forEach(([p1, p2]) => {
-      const kp1 = keypoints.find((k) => k.name === p1);
-      const kp2 = keypoints.find((k) => k.name === p2);
-
-      if (kp1 && kp2 && kp1.score > 0.5 && kp2.score > 0.5) {
-        ctx.beginPath();
-        ctx.moveTo(kp1.x, kp1.y);
-        ctx.lineTo(kp2.x, kp2.y);
-        ctx.strokeStyle = "#00FFAA";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
-    });
   };
 
-  // 🧠 ACCURACY CALCULATION
+  // 🧠 POSE RECOGNITION
+  const detectPose = (keypoints) => {
+    const leftWrist = keypoints.find(k => k.name === "left_wrist");
+    const rightWrist = keypoints.find(k => k.name === "right_wrist");
+    const leftShoulder = keypoints.find(k => k.name === "left_shoulder");
+    const rightShoulder = keypoints.find(k => k.name === "right_shoulder");
+    const leftAnkle = keypoints.find(k => k.name === "left_ankle");
+    const rightAnkle = keypoints.find(k => k.name === "right_ankle");
+
+    if (!leftShoulder || !rightShoulder) return "Detecting...";
+
+    // 🌳 TREE POSE
+    if (leftAnkle && rightAnkle && leftAnkle.y < rightAnkle.y - 50) {
+      return "Tree Pose 🌳";
+    }
+
+    // 🦸 WARRIOR POSE
+    if (
+      leftWrist && rightWrist &&
+      leftWrist.y < leftShoulder.y &&
+      rightWrist.y < rightShoulder.y
+    ) {
+      return "Warrior Pose ⚔️";
+    }
+
+    // 🧘 MOUNTAIN POSE
+    if (Math.abs(leftShoulder.y - rightShoulder.y) < 20) {
+      return "Mountain Pose 🧘";
+    }
+
+    return "Unknown Pose";
+  };
+
+  // 📊 ACCURACY
   const calculateAccuracy = (leftShoulder, rightShoulder) => {
     const diff = Math.abs(leftShoulder.y - rightShoulder.y);
     const score = Math.max(0, 100 - diff * 2);
@@ -73,13 +83,13 @@ export default function LiveClass() {
     if (rounded > 80) {
       setFeedback("✅ Excellent posture!");
     } else if (rounded > 50) {
-      setFeedback("⚠️ Slight adjustment needed");
+      setFeedback("⚠️ Adjust slightly");
     } else {
       setFeedback("❌ Fix your posture");
     }
   };
 
-  // 🤖 POSE DETECTION
+  // 🤖 DETECTION LOOP
   const runPoseDetection = useCallback(async () => {
     const detector = await poseDetection.createDetector(
       poseDetection.SupportedModels.MoveNet
@@ -99,6 +109,10 @@ export default function LiveClass() {
         const ctx = canvas.getContext("2d");
         drawSkeleton(keypoints, ctx);
 
+        // 🔥 POSE DETECTION
+        const pose = detectPose(keypoints);
+        setPoseName(pose);
+
         const leftShoulder = keypoints.find(k => k.name === "left_shoulder");
         const rightShoulder = keypoints.find(k => k.name === "right_shoulder");
 
@@ -110,29 +124,24 @@ export default function LiveClass() {
   }, []);
 
   // 🚀 INIT
-useEffect(() => {
-  const init = async () => {
-    await startCamera();
-    await runPoseDetection();
-  };
+  useEffect(() => {
+    const init = async () => {
+      await startCamera();
+      await runPoseDetection();
+    };
 
-  init();
+    init();
 
-  return () => {
-    // clear interval
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
 
-    // stop camera safely
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const video = videoRef.current;
-
-    if (video && video.srcObject) {
-      video.srcObject.getTracks().forEach(track => track.stop());
-    }
-  };
-}, [runPoseDetection]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const video = videoRef.current;
+      if (video && video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [runPoseDetection]);
 
   return (
     <div className="bg-[#f5efe6] min-h-screen p-8">
@@ -142,21 +151,8 @@ useEffect(() => {
 
         {/* CAMERA */}
         <div className="relative">
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            width="640"
-            height="480"
-            className="rounded-lg shadow"
-          />
-
-          <canvas
-            ref={canvasRef}
-            width="640"
-            height="480"
-            className="absolute top-0 left-0"
-          />
+          <video ref={videoRef} autoPlay playsInline width="640" height="480" className="rounded-lg shadow" />
+          <canvas ref={canvasRef} width="640" height="480" className="absolute top-0 left-0" />
 
           <p className="mt-4 text-xl font-semibold">{feedback}</p>
         </div>
@@ -164,6 +160,10 @@ useEffect(() => {
         {/* STATS */}
         <div className="bg-white p-6 rounded-2xl shadow text-center">
           <h2 className="text-xl font-bold mb-4">Performance</h2>
+
+          <div className="text-2xl font-semibold mb-2 text-blue-600">
+            {poseName}
+          </div>
 
           <div className="text-5xl font-bold text-green-600">
             {accuracy}%
@@ -177,10 +177,6 @@ useEffect(() => {
               style={{ width: `${accuracy}%` }}
             />
           </div>
-
-          <p className="mt-6 text-gray-700">
-            Keep your shoulders aligned and maintain balance.
-          </p>
         </div>
 
       </div>
