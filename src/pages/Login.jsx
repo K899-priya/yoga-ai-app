@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { loginUser } from "../services/api";
-import { motion as _motion} from "framer-motion";
+import { motion as _motion } from "framer-motion";
 import { Mail, Lock } from "lucide-react";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
+  const [isOn, setIsOn] = useState(false);
+
+  const toggleLamp = () => {
+    setIsOn(!isOn);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,24 +23,48 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen min-w-screen flex items-center justify-center bg-linear-to-br from-[#f3c6c6] via-[#f5efe6] to-[#e7b6b6] relative overflow-hidden">
+    <div
+      className={`min-h-screen flex items-center justify-center relative overflow-hidden transition-all duration-700 ${
+        isOn
+          ? "bg-linear-to-br from-[#1a1a1a] via-[#2b2b2b] to-black"
+          : "bg-black"
+      }`}
+    >
+      {/* 🌟 LIGHT GLOW */}
+      <div
+        className={`absolute w-100 h-100 rounded-full blur-3xl transition-all duration-700 ${
+          isOn ? "bg-yellow-300 opacity-30" : "opacity-0"
+        }`}
+      />
 
-      {/* 🔥 BACKGROUND GLOW */}
-      <div className="absolute w-72 h-72 bg-pink-400 rounded-full blur-3xl opacity-30 top-10 left-10"></div>
-      <div className="absolute w-72 h-72 bg-orange-300 rounded-full blur-3xl opacity-30 bottom-10 right-10"></div>
+      {/* 💡 LAMP */}
+      <div className="absolute left-20 top-1/2 -translate-y-1/2 flex flex-col items-center">
+        <div className="w-28 h-16 bg-gray-300 rounded-t-full" />
+        <div className="w-2 h-32 bg-gray-300" />
+
+        {/* SWITCH */}
+        <div
+          onClick={toggleLamp}
+          className="w-2 h-10 bg-yellow-500 mt-2 cursor-pointer rounded hover:scale-110 transition"
+        />
+      </div>
 
       {/* 💎 LOGIN CARD */}
       <_motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 40 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
+        initial={{ opacity: 0, scale: 0.8, y: 50 }}
+        animate={{
+          opacity: isOn ? 1 : 0,
+          scale: isOn ? 1 : 0.8,
+          y: isOn ? 0 : 50,
+        }}
         transition={{ duration: 0.5 }}
-        className="relative z-10 bg-white/30 backdrop-blur-xl border border-white/30 shadow-2xl rounded-3xl p-10 w-95"
+        className="relative z-10 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-10 w-96"
       >
-        <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
+        <h1 className="text-3xl font-bold text-center mb-2 text-white">
           Welcome Back 👋
         </h1>
 
-        <p className="text-center text-gray-600 mb-6 text-sm">
+        <p className="text-center text-gray-300 mb-6 text-sm">
           Login to continue your yoga journey
         </p>
 
@@ -43,12 +72,12 @@ export default function Login() {
 
           {/* EMAIL */}
           <div className="relative">
-            <Mail className="absolute left-3 top-3 text-gray-500" size={18} />
+            <Mail className="absolute left-3 top-3 text-gray-300" size={18} />
 
             <input
               type="email"
               placeholder="Email"
-              className="w-full pl-10 p-3 rounded-lg bg-white/70 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+              className="w-full pl-10 p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
               onChange={(e) =>
                 setForm({ ...form, email: e.target.value })
               }
@@ -57,12 +86,12 @@ export default function Login() {
 
           {/* PASSWORD */}
           <div className="relative">
-            <Lock className="absolute left-3 top-3 text-gray-500" size={18} />
+            <Lock className="absolute left-3 top-3 text-gray-300" size={18} />
 
             <input
               type="password"
               placeholder="Password"
-              className="w-full pl-10 p-3 rounded-lg bg-white/70 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+              className="w-full pl-10 p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
               onChange={(e) =>
                 setForm({ ...form, password: e.target.value })
               }
@@ -70,24 +99,23 @@ export default function Login() {
           </div>
 
           {/* BUTTON */}
-          <_motion.button
+          <motion.button
             whileTap={{ scale: 0.95 }}
-            whileHover={{ scale: 1.02 }}
-            className="w-full bg-linear-to-r from-pink-500 to-orange-400 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition"
+            whileHover={{ scale: 1.05 }}
+            className="w-full bg-linear-to-r from-yellow-400 to-yellow-600 text-black py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition"
           >
-            Login
-          </_motion.button>
+            Sign In
+          </motion.button>
 
         </form>
 
-        {/* EXTRA LINKS */}
-        <div className="text-center mt-5 text-sm text-gray-600">
+        {/* EXTRA */}
+        <div className="text-center mt-5 text-sm text-gray-300">
           Don’t have an account?{" "}
-          <span className="text-pink-600 font-semibold cursor-pointer hover:underline">
+          <span className="text-yellow-400 font-semibold cursor-pointer hover:underline">
             Sign up
           </span>
         </div>
-
       </_motion.div>
     </div>
   );
