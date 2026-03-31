@@ -6,7 +6,7 @@ const yogaPoses = {
       name: "Mountain Pose (Tadasana)",
       steps: [
         "Stand tall with feet together",
-        "Relax shoulders and keep arms at sides",
+        "Relax shoulders",
         "Distribute weight evenly",
         "Take deep breaths",
       ],
@@ -22,7 +22,18 @@ const yogaPoses = {
         "Rest forehead on mat",
       ],
       benefits: "Relaxes body and mind",
-      video: "https://www.youtube.com/embed/wxCz0UNUNeQ",
+      video: "https://www.youtube.com/embed/kH12QrSGedM",
+    },
+    {
+      name: "Cat-Cow Pose",
+      steps: [
+        "Start on hands and knees",
+        "Inhale: arch back (cow)",
+        "Exhale: round spine (cat)",
+        "Repeat slowly",
+      ],
+      benefits: "Improves flexibility",
+      video: "https://www.youtube.com/embed/LIVJZZyZ2qM?si=Oh-us2Uz4KSIiGt2",
     },
   ],
 
@@ -36,7 +47,29 @@ const yogaPoses = {
         "Hold balance",
       ],
       benefits: "Improves focus and balance",
-      video: "https://www.youtube.com/embed/Fr5kiIygm0c",
+      video: "https://www.youtube.com/embed/ZIAnRmD7FqY",
+    },
+    {
+      name: "Warrior II (Virabhadrasana II)",
+      steps: [
+        "Step one foot back",
+        "Bend front knee",
+        "Stretch arms sideways",
+        "Look forward",
+      ],
+      benefits: "Strengthens legs",
+      video: "https://www.youtube.com/embed/4EjS2H9lGgA",
+    },
+    {
+      name: "Bridge Pose",
+      steps: [
+        "Lie on back",
+        "Bend knees",
+        "Lift hips upward",
+        "Hold position",
+      ],
+      benefits: "Strengthens back",
+      video: "https://www.youtube.com/embed/wPM8icPu6H8",
     },
   ],
 
@@ -47,10 +80,32 @@ const yogaPoses = {
         "Squat down",
         "Place hands on floor",
         "Lean forward",
-        "Lift feet off ground",
+        "Lift feet",
       ],
       benefits: "Builds arm strength",
       video: "https://www.youtube.com/embed/B4kNiCWTl7M",
+    },
+    {
+      name: "Headstand (Sirsasana)",
+      steps: [
+        "Interlock fingers",
+        "Place head on floor",
+        "Lift legs slowly",
+        "Balance body",
+      ],
+      benefits: "Improves blood flow",
+      video: "https://www.youtube.com/embed/2kFJ0F7lXvE",
+    },
+    {
+      name: "Wheel Pose (Chakrasana)",
+      steps: [
+        "Lie on back",
+        "Place hands near ears",
+        "Push body upward",
+        "Hold position",
+      ],
+      benefits: "Improves flexibility",
+      video: "https://www.youtube.com/embed/5c6ZQhPzZ2E",
     },
   ],
 };
@@ -65,16 +120,16 @@ export default function Posture() {
         Yoga Pose Library
       </h1>
 
-      {/* CATEGORY BUTTONS */}
-      <div className="flex gap-4 mb-8">
+      {/* CATEGORY */}
+      <div className="flex gap-4 mb-8 flex-wrap">
         {Object.keys(yogaPoses).map((category) => (
           <button
             key={category}
             onClick={() => setActiveCategory(category)}
-            className={`px-5 py-2 rounded-full font-medium ${
+            className={`px-5 py-2 rounded-full font-medium transition ${
               activeCategory === category
-                ? "bg-green-600 text-white"
-                : "bg-white shadow"
+                ? "bg-green-600 text-white scale-105"
+                : "bg-white shadow hover:scale-105"
             }`}
           >
             {category}
@@ -85,8 +140,10 @@ export default function Posture() {
       {/* POSES */}
       <div className="grid md:grid-cols-2 gap-6">
         {yogaPoses[activeCategory].map((pose, index) => (
-          <div key={index} className="bg-white p-6 rounded-2xl shadow">
-
+          <div
+            key={index}
+            className="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition"
+          >
             <h2 className="text-2xl font-bold mb-3">{pose.name}</h2>
 
             <p className="text-green-600 font-medium mb-2">
@@ -101,19 +158,17 @@ export default function Posture() {
             </ul>
 
             {/* VIDEO */}
-            <div className="aspect-video">
+            <div className="aspect-video overflow-hidden rounded-lg">
               <iframe
-                className="w-full h-full rounded-lg"
+                className="w-full h-full"
                 src={pose.video}
                 title={pose.name}
                 allowFullScreen
               ></iframe>
             </div>
-
           </div>
         ))}
       </div>
-
     </div>
   );
 }
