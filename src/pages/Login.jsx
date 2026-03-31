@@ -24,7 +24,7 @@ export default function Login() {
 
   return (
     <div
-      className={`min-h-screen flex items-center justify-center relative overflow-hidden transition-all duration-700 ${
+      className={`min-h-screen min-w-screen flex items-center justify-center relative overflow-hidden transition-all duration-700 ${
         isOn
           ? "bg-linear-to-br from-[#1a1a1a] via-[#2b2b2b] to-black"
           : "bg-black"
@@ -32,7 +32,7 @@ export default function Login() {
     >
       {/* 🌟 LIGHT GLOW */}
       <div
-        className={`absolute w-100 h-100 rounded-full blur-3xl transition-all duration-700 ${
+        className={`absolute w-100 h-75 rounded-full blur-3xl transition-all duration-700 ${
           isOn ? "bg-yellow-300 opacity-30" : "opacity-0"
         }`}
       />
@@ -46,8 +46,21 @@ export default function Login() {
         <div
           onClick={toggleLamp}
           className="w-2 h-10 bg-yellow-500 mt-2 cursor-pointer rounded hover:scale-110 transition"
+                  
         />
+        <span className="text-2xl animate-bounce pt-2">👆</span>
       </div>
+
+      {/* 👉 CLICK HERE INDICATOR */}
+      {!isOn && (
+        <_motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 1.2 }}
+          className="absolute left-36 top-1/2 -translate-y-1/2 flex items-center gap-2 text-yellow-400 font-semibold"
+        >
+        </_motion.div>
+      )}
 
       {/* 💎 LOGIN CARD */}
       <_motion.div
@@ -99,13 +112,13 @@ export default function Login() {
           </div>
 
           {/* BUTTON */}
-          <motion.button
+          <_motion.button
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: 1.05 }}
             className="w-full bg-linear-to-r from-yellow-400 to-yellow-600 text-black py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition"
           >
             Sign In
-          </motion.button>
+          </_motion.button>
 
         </form>
 
